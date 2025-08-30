@@ -1,0 +1,17 @@
+[project]
+name = "sar-journal"
+version = "0.1.0"
+description = "TUI showing Linux journal entries and sysstat metrics"
+authors = [{name="Sebastian Meisel", email="sebastian.meisel@gmail.com"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "textual",
+]
+
+[project.scripts]
+sar-journal = "sar_journal.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

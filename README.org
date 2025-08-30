@@ -1,0 +1,71 @@
+#+TITLE: sar-journal
+#+AUTHOR: Sebastian Meisel
+#+LANGUAGE: en
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: header-args:python :session *Python* :results output
+
+* sar-journal
+A Textual TUI application to display Linux journal entries together with
+system performance metrics from *sysstat (sar)*.
+
+This package provides:
+- Real-time journal monitoring (via ~journalctl~)
+- CPU, Load, Memory, Disk, and Network metrics (via ~sadf/sar~)
+- Interactive Textual UI (keyboard shortcuts for navigation, filtering, etc.)
+- Simple Python packaging for installation with ~uv~ or ~pip~
+
+* Project Structure
+#+begin_src text
+sar_journal/
+├── pyproject.toml     # Project metadata
+├── README.org         # This file
+├── src/
+│   └── sar_journal/
+│       ├── __init__.py
+│       ├── journal.py   # Journal access functions
+│       ├── sar.py       # Sysstat parsing
+│       ├── ui.py        # Textual UI widgets
+│       └── app.py       # Main application
+└── tests/
+    └── test_basic.py
+#+end_src
+
+* Installation
+You can set up a virtual environment using [[https://github.com/astral-sh/uv][uv]]:
+
+#+begin_src bash
+# create virtual environment
+uv venv .venv
+source .venv/bin/activate
+
+# install in editable mode
+uv pip install -e .
+#+end_src
+
+* Usage
+Run the application from the command line:
+
+#+begin_src bash
+python -m sar_journal.app
+#+end_src
+
+* Keyboard Shortcuts
+- ~q~ :: quit
+- ~r~ :: reload data
+- ~0..7~ :: filter journal by priority (EMERG → DEBUG)
+- ~c~ :: switch to CPU metrics
+- ~l~ :: switch to Load metrics
+- ~m~ :: switch to Memory metrics
+- ~d~ :: switch to Disk metrics
+- ~n~ :: switch to Network metrics
+- (optional) PgUp/PgDn to move in time (planned)
+
+* Development
+Run tests with:
+
+#+begin_src bash
+pytest
+#+end_src
+
+* License
+GPL-3.0 or later.
