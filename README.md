@@ -1,10 +1,17 @@
+author: Sebastian Meisel
+lang: en
+title: sar-journal
+
 ```{=org}
-#+PROPERTY: header-args:python :session *Python* :results output
+#+property: header-args:python :session *Python* :results output
 ```
-# sar-journal {#sar-journal-1}
+# sar-journal [sar-journal-1]
 
 A Textual TUI application to display Linux journal entries together with
 system performance metrics from **sysstat (sar)**.
+
+> ⚠️ Disclaimer: This is a proof of concept built by a hobbyist. It is
+> not a production-ready monitoring solution. Use at your own risk.
 
 This package provides:
 
@@ -12,7 +19,8 @@ This package provides:
 -   CPU, Load, Memory, Disk, and Network metrics (via `sadf/sar`)
 -   Interactive Textual UI (keyboard shortcuts for navigation,
     filtering, etc.)
--   Simple Python packaging for installation with `uv` or `pip`
+-   Simple Python packaging for installation with `uv`, `pyenv`, or
+    `venv`
 
 # Project Structure
 
@@ -23,26 +31,44 @@ sar_journal/
 ├── src/
 │   └── sar_journal/
 │       ├── __init__.py
-│       ├── journal.py   # Journal access functions
-│       ├── sar.py       # Sysstat parsing
-│       ├── ui.py        # Textual UI widgets
-│       └── app.py       # Main application
+│       ├── config.py     # Config and timestamp parsing
+│       ├── constants.py  # Priority/metric presets
+│       ├── journal.py    # Journal access
+│       ├── stats.py      # Sysstat parsing
+│       ├── ui.py         # Textual UI application
+│       └── app.py        # Entry point
 └── tests/
     └── test_basic.py
 ```
 
 # Installation
 
-You can set up a virtual environment using
-[uv](https://github.com/astral-sh/uv):
+You can install in a Python 3.11+ virtual environment using one of the
+following tools:
+
+## Using uv (recommended)
 
 ``` bash
-# create virtual environment
 uv venv .venv
 source .venv/bin/activate
-
-# install in editable mode
 uv pip install -e .
+```
+
+## Using pyenv
+
+``` bash
+pyenv install 3.11
+pyenv virtualenv 3.11 sar-journal
+pyenv activate sar-journal
+pip install -e .
+```
+
+## Using built-in venv
+
+``` bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
 ```
 
 # Usage
@@ -50,7 +76,13 @@ uv pip install -e .
 Run the application from the command line:
 
 ``` bash
-python -m sar_journal.app
+python -m sar_journal.app --time "2025-08-30 14:00"
+```
+
+or just
+
+``` bash
+.venv/bin/sar-journal --time "2025-08-30 14:00"
 ```
 
 # Keyboard Shortcuts
@@ -79,7 +111,11 @@ python -m sar_journal.app
 `n`
 :   switch to Network metrics
 
--   (optional) PgUp/PgDn to move in time (planned)
+`b`
+:   shift time window back 10 minutes
+
+`f`
+:   shift time window forward 10 minutes
 
 # Development
 
@@ -91,4 +127,16 @@ pytest
 
 # License
 
-GPL-3.0 or later.
+This program is free software: you can redistribute it and/or modify it
+under the terms of the [GNU General Public License](LICENSE) as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+# Contact
+
+Sebastian Meisel 📧 Email: sebastian.meisel@gmail.com
