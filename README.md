@@ -1,11 +1,4 @@
-author: Sebastian Meisel
-lang: en
-title: sar-journal
-
-```{=org}
-#+property: header-args:python :session *Python* :results output
-```
-# sar-journal [sar-journal-1]
+# sar-journal 
 
 A Textual TUI application to display Linux journal entries together with
 system performance metrics from **sysstat (sar)**.
@@ -139,4 +132,5 @@ Public License for more details.
 
 # Contact
 
-Sebastian Meisel 📧 Email: sebastian.meisel@gmail.com
+Sebastian Meisel
+📧 Email: sebastian.meisel@gmail.com
