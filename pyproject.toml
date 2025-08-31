@@ -15,3 +15,13 @@ sar-journal = "sar_journal.app:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build]
+packages = ["src/sar_journal"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+pythonpath = ["src"]
+# pytest-asyncio config
+asyncio_mode = "strict"
