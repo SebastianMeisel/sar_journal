@@ -15,6 +15,7 @@ class StatsPane(Static):
         metric: Reactive current metric type being displayed
     """
     metric = reactive("cpu")
+    header_text = reactive("")
 
     def __init__(self, cfg: AppConfig):
         """Initialize the stats pane.
@@ -27,6 +28,8 @@ class StatsPane(Static):
         self.cfg = cfg
         self.table = DataTable()
         self.styles.height = 8
+        self._header_static = Static("")
+        self.header_text = f"SAR {self.metric}"
 
 
     def compose(self) -> ComposeResult:
@@ -36,7 +39,7 @@ class StatsPane(Static):
             Static header with current metric name
             DataTable for displaying metric data
         """
-        yield Static(f"SAR {self.metric}")
+        yield self._header_static
         yield self.table
 
     def set_metric(self, metric: str) -> None:
@@ -48,7 +51,12 @@ class StatsPane(Static):
         if metric not in STAT_PRESETS:
             return
         self.metric = metric
+        self.header_text = f"SAR {self.metric}"
         self.load_metric(metric)
+
+    def watch_header_text(self, new_text: str) -> None:
+        """Update the header static widget when header_text changes."""
+        self._header_static.update(new_text)
 
     def load_metric(self, metric: str) -> bool:
         """Load and display system statistics for the given metric.
@@ -69,6 +77,12 @@ class StatsPane(Static):
         delta_days = (now.date() - self.cfg.time.date()).days
         start_time = self.cfg.time - dt.timedelta(minutes=10)
         end_time = self.cfg.until + dt.timedelta(minutes=1)
+        # Ensure end_time does not go past now
+        if end_time > now:
+            end_time = now
+        # Ensure start_time is not after end_time
+        if start_time >= end_time:
+            start_time = end_time - dt.timedelta(minutes=1) # Ensure at least 1 minute window
         cmd = [
             "sar",
             "-" + str(delta_days),

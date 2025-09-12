@@ -36,6 +36,9 @@ Examples:
         time = datetime.now() - timedelta(minutes=10)
 
     until = time + timedelta(minutes=10)
+    now = datetime.now()
+    if until > now:
+        until = now
     return AppConfig(time=time, until=until)
 
 

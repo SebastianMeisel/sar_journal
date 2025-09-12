@@ -15,7 +15,7 @@ import datetime as dt
 from .config import AppConfig
 from .journal import JournalPane
 from .stats import StatsPane
-from .footer import Footer
+from .footer import Footer, FooterBinding, BindingGroup
 
 class JournalSarApp(App):
     """Main application class for the Journal+SAR TUI."""
@@ -24,19 +24,19 @@ class JournalSarApp(App):
 
     BINDINGS = (
         [
-            Binding("q", "quit", "Quit"),
-            Binding("r", "reload", "Reload", tooltip='Reload statistics and journal'),
+            FooterBinding("q", "quit", "Quit", group=BindingGroup("App", "Application actions")),
+            FooterBinding("r", "reload", "Reload", tooltip='Reload statistics and journal', group=BindingGroup("App", "Application actions")),
             # Metric switching
-            Binding("c", "metric('cpu')", "CPU"),
-            Binding("l", "metric('load')", "Load"),
-            Binding("m", "metric('mem')", "Mem"),
-            Binding("d", "metric('disk')", "Disk"),
-            Binding("n", "metric('net')", "Net"),
+            FooterBinding("c", "metric('cpu')", "CPU", group=BindingGroup("Metrics", "Switch displayed metric")),
+            FooterBinding("l", "metric('load')", "Load", group=BindingGroup("Metrics", "Switch displayed metric")),
+            FooterBinding("m", "metric('mem')", "Mem", group=BindingGroup("Metrics", "Switch displayed metric")),
+            FooterBinding("d", "metric('disk')", "Disk", group=BindingGroup("Metrics", "Switch displayed metric")),
+            FooterBinding("n", "metric('net')", "Net", group=BindingGroup("Metrics", "Switch displayed metric")),
         ]
-        + [Binding(str(n), f"prio({n})", f"Prio≤{n}") for n in range(8)]
+        + [FooterBinding(str(n), f"prio({n})", f"Prio≤{n}", group=BindingGroup("Journal", "Filter journal entries")) for n in range(8)]
         + [
-            Binding("b", "shift_time(-10)", "Back 10m"),
-            Binding("f", "shift_time(10)", "Forward 10m", tooltip="Go 10m forward in Time"),
+            FooterBinding("b", "shift_time(-10)", "Back 10m", group=BindingGroup("Time", "Shift time window")),
+            FooterBinding("f", "shift_time(10)", "Forward 10m", tooltip="Go 10m forward in Time", group=BindingGroup("Time", "Shift time window")),
         ]
     )
 
@@ -51,6 +51,16 @@ class JournalSarApp(App):
         self.stats = StatsPane(cfg)
         self.stats.id = "stats"
         self._shift_direction = -1 # Default to shifting backward
+
+    def _cap_time_to_now(self) -> None:
+        now = dt.datetime.now().replace(microsecond=0)
+        if self.cfg.until > now:
+            self.cfg.until = now
+        # Ensure time is not after until, and also not in the future if until was capped
+        if self.cfg.time > self.cfg.until:
+            self.cfg.time = self.cfg.until - dt.timedelta(minutes=10) # Default window
+        elif self.cfg.time > now: # if time is in future, even if before until, cap it
+            self.cfg.time = now - dt.timedelta(minutes=10)
 
     def on_mount(self) -> None:
         """Called when the app is mounted. Triggers initial data load."""
@@ -67,6 +77,7 @@ class JournalSarApp(App):
     def action_reload(self) -> None:
         """Action to reload both journal entries and statistics."""
         self.journal.reload()
+        self._cap_time_to_now() # Cap times before loading metrics
         found_data = self.stats.load_metric(self.stats.metric)
         # If no data is found, shift time until data appears
         if not found_data:
@@ -75,6 +86,7 @@ class JournalSarApp(App):
                 i += 1
                 self.cfg.time += dt.timedelta(minutes=self._shift_direction * 10)
                 self.cfg.until += dt.timedelta(minutes=self._shift_direction * 10)
+                self._cap_time_to_now() # Cap times after shifting within the loop
                 self.log(f"No data, shifting time to {self.cfg.time}")
                 found_data = self.stats.load_metric(self.stats.metric)
 
@@ -90,17 +102,20 @@ class JournalSarApp(App):
         """Shift the time window by the given number of minutes."""
         # Update shift direction if user explicitly goes forward or backward
         if minutes > 0:
+            now = dt.datetime.now().replace(microsecond=0)
+            # Calculate the maximum allowed forward shift to not exceed `now`
+            time_difference = now - self.cfg.time
+            max_minutes_to_shift = int(time_difference.total_seconds() / 60)
+            if minutes > max_minutes_to_shift:
+                minutes = max_minutes_to_shift
+            if minutes <= 0:  # If already at or past now, or no room to shift
+                return # Do not shift if already at or past now
             self._shift_direction = 1
         elif minutes < 0:
             self._shift_direction = -1
 
-        if minutes > 0:
-            now = dt.datetime.now().replace(microsecond=0)
-            if self.cfg.time + dt.timedelta(minutes=minutes) > now:
-                minutes = int((now - self.cfg.time).total_seconds() / 60)
-                if minutes < 0: # Already past now
-                    minutes = 0
         self.cfg.time += dt.timedelta(minutes=minutes)
         self.cfg.until += dt.timedelta(minutes=minutes)
+        self._cap_time_to_now() # Cap times after shifting
         self.action_reload()
 

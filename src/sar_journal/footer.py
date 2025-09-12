@@ -15,9 +15,45 @@ from textual.containers import ScrollableContainer
 from textual.reactive import reactive
 from textual.widget import Widget
 from textual.widgets import Label
+from typing import NamedTuple
 
 if TYPE_CHECKING:
     from textual.screen import Screen
+
+
+class BindingGroup(NamedTuple):
+    name: str
+    description: str
+
+
+class FooterBinding(Binding):
+    """A custom Binding that includes a group for display in the footer."""
+
+    def __init__(
+        self,
+        key: str,
+        action: str,
+        description: str,
+        show: bool = True,
+        key_display: str | None = None,
+        priority: bool = False,
+        tooltip: str = "",
+        id: str | None = None,
+        system: bool = False,
+        group: BindingGroup | None = None,
+    ) -> None:
+        super().__init__(
+            key=key,
+            action=action,
+            description=description,
+            show=show,
+            key_display=key_display,
+            priority=priority,
+            tooltip=tooltip,
+            id=id,
+            system=system,
+        )
+        self.group = group
 
 
 @rich.repr.auto
@@ -247,7 +283,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
         for group, multi_bindings_iterable in groupby(
             action_to_bindings.values(),
-            lambda multi_bindings: multi_bindings[0][0].group,
+            lambda multi_bindings: getattr(multi_bindings[0][0], "group", BindingGroup("Other", "Other actions")),
         ):
             if group is not None:
                 for multi_bindings in multi_bindings_iterable:
@@ -262,17 +298,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                         classes="-grouped",
                     ).data_bind(Footer.compact)
                 yield FooterLabel(group.description)
-            else:
-                for multi_bindings in multi_bindings_iterable:
-                    binding, enabled, tooltip = multi_bindings[0]
-                    yield FooterKey(
-                        binding.key,
-                        self.app.get_key_display(binding),
-                        binding.description,
-                        binding.action,
-                        disabled=not enabled,
-                        tooltip=tooltip,
-                    ).data_bind(Footer.compact)
+
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             try:
                 _node, binding, enabled, tooltip = active_bindings[
