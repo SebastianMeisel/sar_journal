@@ -1,0 +1,11 @@
+
+    Horizontal { height: 1fr; }
+    #journal, #stats { width: 1fr; min-width: 40; }
+    Log { 
+        text-wrap: wrap;
+    }
+    DataTable { 
+        scrollbar-size: 1 1;
+    }
+
+    

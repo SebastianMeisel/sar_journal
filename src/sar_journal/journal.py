@@ -74,6 +74,8 @@ class JournalPane(Static):
             try:
                 rec = json.loads(line)
                 msg = rec.get("MESSAGE", "")
+                if not isinstance(msg, str):
+                    msg = str(msg)
                 timestamp = rec.get("__REALTIME_TIMESTAMP", "")
                 priority = rec.get("PRIORITY", "6")
                 

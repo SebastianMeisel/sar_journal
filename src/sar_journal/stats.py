@@ -50,7 +50,7 @@ class StatsPane(Static):
         self.metric = metric
         self.load_metric(metric)
 
-    def load_metric(self, metric: str) -> None:
+    def load_metric(self, metric: str) -> bool:
         """Load and display system statistics for the given metric.
 
         Invokes the ``sar`` command with the configured start and end times
@@ -82,13 +82,13 @@ class StatsPane(Static):
         except Exception as e:
             self.table.add_column("Error")
             self.table.add_row(str(e))
-            return
+            return False
             
         rows = list(csv.reader(out.splitlines(), delimiter=';'))
-        if not rows:
+        if len(rows) < 2:
             self.table.add_column("Status")
             self.table.add_row("No data available")
-            return
+            return False
             
         # Add columns from header row
         header = rows[0]
@@ -99,3 +99,4 @@ class StatsPane(Static):
             # Ensure row has same number of columns as header
             padded_row = row + [''] * (len(header) - len(row))
             self.table.add_row(*padded_row[:len(header)])
+        return True
