@@ -5,13 +5,16 @@
 #+PROPERTY: header-args:python :session *Python* :results output
 
 * sar-journal
-A Textual TUI application to display Linux journal entries together with
-system performance metrics from *sysstat (sar)*.
+A Textual TUI application to display Linux journal entries aside with system performance metrics from *sysstat (sar)* in 10 Minutes portions. You can then move back and forward in time to look if events and unusual stats correlate.
 
 #+begin_quote
-⚠️ Disclaimer: This is a proof of concept built by a hobbyist.  
-It is not a production-ready monitoring solution. Use at your own risk.
+⚠️ Disclaimer: This is a proof of concept built by a hobbyist. It is not a production-ready monitoring solution. Use at your own risk.
 #+end_quote
+
+#+ATTR_HTML: :width 80%
+#+ATTR_LATEX: :width .65\linewidth :placement [!htpb]
+#+ATTR_ORG: :width 700
+[[file:img/sar_journal.gif]]
 
 This package provides:
 - Real-time journal monitoring (via ~journalctl~)
@@ -72,28 +75,24 @@ python -m sar_journal.app --time "2025-08-30 14:00"
 or just
 
 #+begin_src bash
-.venv/bin/sar-journal --time "2025-08-30 14:00"
+sar-journal --time "2025-08-30 14:00"
 #+end_src
 
+Without the ~--time~ argument it starts 10 Minutes ago.
 
 * Keyboard Shortcuts
 - ~q~ :: quit
 - ~r~ :: reload data
-- ~0..7~ :: filter journal by priority (EMERG → DEBUG)
+- ~1..7~ :: filter journal by priority (ALERT → DEBUG)
 - ~c~ :: switch to CPU metrics
 - ~l~ :: switch to Load metrics
 - ~m~ :: switch to Memory metrics
 - ~d~ :: switch to Disk metrics
 - ~n~ :: switch to Network metrics
+- ~E~ :: switch to Network device errors
+- ~T~ :: switch to TCP errors
 - ~b~ :: shift time window back 10 minutes
 - ~f~ :: shift time window forward 10 minutes
-
-* Development
-Run tests with:
-
-#+begin_src bash
-pytest
-#+end_src
 
 * License
 This program is free software: you can redistribute it and/or modify

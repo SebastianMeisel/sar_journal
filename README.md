@@ -1,19 +1,34 @@
-# sar-journal 
+```{=org}
+#+PROPERTY: header-args:python :session *Python* :results output
+```
+# sar-journal {#sar-journal-1}
 
-A Textual TUI application to display Linux journal entries together with
-system performance metrics from **sysstat (sar)**.
+A Textual TUI application to display Linux journal entries aside with
+system performance metrics from **sysstat (sar)** in 10 Minutes
+portions. You can then move back and forward in time to look if events
+and unusual stats correlate.
 
 > ⚠️ Disclaimer: This is a proof of concept built by a hobbyist. It is
 > not a production-ready monitoring solution. Use at your own risk.
 
+```{=org}
+#+ATTR_HTML: :width 80%
+```
+```{=org}
+#+ATTR_LATEX: :width .65\linewidth :placement [!htpb]
+```
+```{=org}
+#+ATTR_ORG: :width 700
+```
+![](img/sar_journal.gif)
+
 This package provides:
 
--   Real-time journal monitoring (via `journalctl`)
--   CPU, Load, Memory, Disk, and Network metrics (via `sadf/sar`)
--   Interactive Textual UI (keyboard shortcuts for navigation,
-    filtering, etc.)
--   Simple Python packaging for installation with `uv`, `pyenv`, or
-    `venv`
+- Real-time journal monitoring (via `journalctl`)
+- CPU, Load, Memory, Disk, and Network metrics (via `sadf/sar`)
+- Interactive Textual UI (keyboard shortcuts for navigation, filtering,
+  etc.)
+- Simple Python packaging for installation with `uv`, `pyenv`, or `venv`
 
 # Project Structure
 
@@ -75,8 +90,10 @@ python -m sar_journal.app --time "2025-08-30 14:00"
 or just
 
 ``` bash
-.venv/bin/sar-journal --time "2025-08-30 14:00"
+sar-journal --time "2025-08-30 14:00"
 ```
+
+Without the `--time` argument it starts 10 Minutes ago.
 
 # Keyboard Shortcuts
 
@@ -86,8 +103,8 @@ or just
 `r`
 :   reload data
 
-`0..7`
-:   filter journal by priority (EMERG → DEBUG)
+`1..7`
+:   filter journal by priority (ALERT → DEBUG)
 
 `c`
 :   switch to CPU metrics
@@ -104,19 +121,17 @@ or just
 `n`
 :   switch to Network metrics
 
+`E`
+:   switch to Network device errors
+
+`T`
+:   switch to TCP errors
+
 `b`
 :   shift time window back 10 minutes
 
 `f`
 :   shift time window forward 10 minutes
-
-# Development
-
-Run tests with:
-
-``` bash
-pytest
-```
 
 # License
 
@@ -132,5 +147,4 @@ Public License for more details.
 
 # Contact
 
-Sebastian Meisel
-📧 Email: sebastian.meisel@gmail.com
+Sebastian Meisel 📧 Email: sebastian.meisel@gmail.com
