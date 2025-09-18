@@ -1,7 +1,4 @@
-```{=org}
-#+PROPERTY: header-args:python :session *Python* :results output
-```
-# sar-journal {#sar-journal-1}
+# sar-journal
 
 A Textual TUI application to display Linux journal entries aside with
 system performance metrics from **sysstat (sar)** in 10 Minutes
@@ -11,15 +8,6 @@ and unusual stats correlate.
 > ⚠️ Disclaimer: This is a proof of concept built by a hobbyist. It is
 > not a production-ready monitoring solution. Use at your own risk.
 
-```{=org}
-#+ATTR_HTML: :width 80%
-```
-```{=org}
-#+ATTR_LATEX: :width .65\linewidth :placement [!htpb]
-```
-```{=org}
-#+ATTR_ORG: :width 700
-```
 ![](img/sar_journal.gif)
 
 This package provides:
