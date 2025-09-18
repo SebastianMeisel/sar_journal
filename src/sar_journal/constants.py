@@ -17,4 +17,6 @@ STAT_PRESETS = {
     "mem":  {"sar_opts": ["-r"], "want": ["kbmemfree", "kbmemused", "%memused"]},
     "disk": {"sar_opts": ["-b"], "want": ["tps", "rtps", "wtps"]},
     "net":  {"sar_opts": ["-n", "DEV"], "want": ["IFACE", "rxpck/s", "txpck/s"]},
+    "edev": {"sar_opts": ["-n", "EDEV"], "want": ["rxerr/s", "txerr/s", "coll/s", "rxdrop/s", "txdrop/s", "txcarr/s", "rxcarr/s", "rxfram/s"]},
+    "etcp": {"sar_opts": ["-n", "ETCP"], "want": ["atmptf/s", "estres/s", "retrseg/s", "isegerr/s", "orts/s"]},
 }

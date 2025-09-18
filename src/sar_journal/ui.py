@@ -15,7 +15,7 @@ import datetime as dt
 from .config import AppConfig
 from .journal import JournalPane
 from .stats import StatsPane
-from .footer import Footer, FooterBinding, BindingGroup
+from .footer import JournalFooter, SarFooter
 
 class JournalSarApp(App):
     """Main application class for the Journal+SAR TUI."""
@@ -24,19 +24,21 @@ class JournalSarApp(App):
 
     BINDINGS = (
         [
-            FooterBinding("q", "quit", "Quit", group=BindingGroup("App", "Application actions")),
-            FooterBinding("r", "reload", "Reload", tooltip='Reload statistics and journal', group=BindingGroup("App", "Application actions")),
+            Binding("q", "quit", "Quit"),
+            Binding("r", "reload", "Reload", tooltip='Reload statistics and journal'),
             # Metric switching
-            FooterBinding("c", "metric('cpu')", "CPU", group=BindingGroup("Metrics", "Switch displayed metric")),
-            FooterBinding("l", "metric('load')", "Load", group=BindingGroup("Metrics", "Switch displayed metric")),
-            FooterBinding("m", "metric('mem')", "Mem", group=BindingGroup("Metrics", "Switch displayed metric")),
-            FooterBinding("d", "metric('disk')", "Disk", group=BindingGroup("Metrics", "Switch displayed metric")),
-            FooterBinding("n", "metric('net')", "Net", group=BindingGroup("Metrics", "Switch displayed metric")),
+            Binding("c", "metric('cpu')", "CPU"),
+            Binding("l", "metric('load')", "Load"),
+            Binding("m", "metric('mem')", "Mem"),
+            Binding("d", "metric('disk')", "Disk"),
+            Binding("n", "metric('net')", "Net"),
+            Binding("E", "metric('edev')", "Device Errors"),
+            Binding("T", "metric('etcp')", "TCP Errors"),
         ]
-        + [FooterBinding(str(n), f"prio({n})", f"Prio≤{n}", group=BindingGroup("Journal", "Filter journal entries")) for n in range(8)]
+        + [Binding(str(n), f"prio({n})", f"Prio≤{n}") for n in range(8)]
         + [
-            FooterBinding("b", "shift_time(-10)", "Back 10m", group=BindingGroup("Time", "Shift time window")),
-            FooterBinding("f", "shift_time(10)", "Forward 10m", tooltip="Go 10m forward in Time", group=BindingGroup("Time", "Shift time window")),
+            Binding("b", "shift_time(-10)", "Back 10m"),
+            Binding("f", "shift_time(10)", "Forward 10m", tooltip="Go 10m forward in Time"),
         ]
     )
 
@@ -72,7 +74,8 @@ class JournalSarApp(App):
         with Vertical():
             yield self.stats
             yield self.journal
-            yield Footer()
+            yield SarFooter()
+            yield JournalFooter()
 
     def action_reload(self) -> None:
         """Action to reload both journal entries and statistics."""

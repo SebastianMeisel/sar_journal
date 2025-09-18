@@ -8,4 +8,18 @@
         scrollbar-size: 1 1;
     }
 
-    
+    SarFooter {
+        dock: bottom;
+        height: 1;
+        margin-bottom: 1;
+    }
+
+    JournalFooter {
+        dock: bottom;
+        height: 1;
+    }
+
+    FooterKey {
+        padding-right: 1;
+        border-left: vkey $foreground 20%;
+    }
